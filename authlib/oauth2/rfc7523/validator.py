@@ -40,14 +40,14 @@ class JWTBearerTokenValidator(BearerTokenValidator):
             claims_options['iss'] = {'essential': True, 'value': issuer}
         self.claims_options = claims_options
 
-    def authenticate_token(self, token_string):
+    def authenticate_token(self, token_string, now=None, leeway=0):
         try:
             claims = jwt.decode(
                 token_string, self.public_key,
                 claims_options=self.claims_options,
                 claims_cls=self.token_cls,
             )
-            claims.validate()
+            claims.validate(now, leeway)
             return claims
         except JoseError as error:
             logger.debug('Authenticate token failed. %r', error)
